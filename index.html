@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Rafaella Minervina</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <h1>Revenue Estimate</h1>
+    </div>
+    <div class="header-right">
+      <img src="assets/logo-rm.jpg" alt="Logo da empresa" />
+    </div>
+  </header>
+
+  <h2 class="title">Simule Sua Projeção Aqui</h2>
+
+  <form class="container" id="formulario">
+    <div class="form-group">
+      <label for="tipologia">Tipologia:</label>
+      <select id="tipologia" required>
+        <option value="studio">Studio</option>
+        <option value="quartoSala">Quarto e sala</option>
+        <option value="2q-1suite">2 quartos / 1 suíte</option>
+        <option value="2suites">2 suítes</option>
+        <option value="3q-1suite">3 quartos / 1 suíte</option>
+        <option value="3q-2suites">3 quartos / 2 suítes</option>
+        <option value="3suites">3 suítes</option>
+        <option value="4suites">4 suítes</option>
+        <option value="5suites">5 suítes</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="precoM2">Preço por m²:</label>
+      <input type="number" id="precoM2" placeholder="Ex: 5000" required />
+    </div>
+
+    <div class="form-group">
+      <label for="quantidadeM2">Quantidade de m²:</label>
+      <input type="number" id="quantidadeM2" placeholder="Ex: 70" required />
+    </div>
+
+    <div class="form-group">
+      <label for="numUnidades">Número de unidades:</label>
+      <select id="numUnidades">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="taxaOcupacao">Taxa de Ocupação:</label>
+      <select id="taxaOcupacao">
+        <option value="40%">40%</option>
+        <option value="60%">60%</option>
+        <option value="80%" selected>80%</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="estadiasCurtas">Estadias Curtas:</label>
+      <select id="estadiasCurtas">
+        <option value="100%">100%</option>
+        <option value="80%" selected>80%</option>
+        <option value="60%">60%</option>
+      </select>
+    </div>
+
+    <button type="submit" id="calcular">Calcular Preço</button>
+  </form>
+
+  <p id="resultado"></p>
+
+  <h2 class="title">Estimativas do Imóvel</h2>
+
+  <div class="estimativas-container">
+    <div class="estimativa">
+      <img src="assets/valor-imovel-imobiliaria.jpg" alt="Ícone valor do imóvel" />
+      <p>Valor do Imóvel</p>
+      <p class="valor" id="valorImovel">R$ 0,00</p>
+    </div>
+
+    <div class="estimativa">
+      <img src="assets/precomediom2.jpg" alt="Ícone preço médio por metro" />
+      <p>Preço Médio m²</p>
+      <p class="valor" id="precoMedioM2">R$ 0,00</p>
+    </div>
+
+    <div class="estimativa">
+      <img src="assets/contasdeconsumo-imobiliaria.jpg" alt="Ícone contas consumo" />
+      <p>Contas de Consumo</p>
+      <p class="valor" id="contasConsumo">R$ 0,00</p>
+    </div>
+
+    <div class="estimativa">
+      <img src="assets/iptu-imobiliaria.jpg" alt="Ícone IPTU" />
+      <p>IPTU</p>
+      <p class="valor" id="iptu">R$ 0,00</p>
+    </div>
+
+    <div class="estimativa">
+      <img src="assets/condominio-mensal-imobiliaria.jpg" alt="Ícone condomínio" />
+      <p>Condomínio Mensal</p>
+      <p class="valor" id="condominio">R$ 0,00</p>
+    </div>
+  </div>
+
+  <h2 class="title">Receita Esperada</h2>
+  <div class="receita-esperada">
+    <div class="dados-receita">
+      <div class="receita-item">
+        <img src="assets/diaria-imobiliaria.jpg" alt="Diária Housi" />
+        <p>Diária Easy</p>
+        <span id="diariaHousi">R$ 0,00</span>
+      </div>
+      <div class="receita-item">
+        <img src="assets/porcentagem-ocupacao-imobiliaria.jpg" alt="Ocupação" />
+        <p>Ocupação</p>
+        <span id="ocupacaoReceita">0%</span>
+      </div>
+      <div class="receita-item">
+        <img src="assets/rentbruta-imobiliaria.jpg" alt="Rentabilidade Bruta" />
+        <p>Rentabilidade Bruta</p>
+        <span id="rentBruta">R$ 0,00</span>
+      </div>
+      <div class="receita-item">
+        <img src="assets/rentliquida-imobiliaria.jpg" alt="Rentabilidade Líquida" />
+        <p>Rentabilidade Líquida</p>
+        <span id="rentLiquida">R$ 0,00</span>
+      </div>
+    </div>
+    <div class="grafico-receita">
+      <h4>Comparativo Rentabilidade Bruta x Líquida</h4>
+      <canvas id="graficoReceita"></canvas>
+    </div>
+  </div>
+
+  <h2 class="title">Rentabilidade Estimada</h2>
+  <div class="rentabilidade-estimada">
+    <div class="rentabilidade-cards">
+      <div class="rentabilidade-card">
+        <p>CAP RATE (%)</p>
+        <span class="rentabilidade-valor" id="capRate">31,9%</span>
+      </div>
+      <div class="rentabilidade-card">
+        <p>C.R. MENSAL</p>
+        <span class="rentabilidade-valor" id="crMensal">2,66%</span>
+      </div>
+    </div>
+    <p class="rentabilidade-texto">
+      *Este estudo é baseado em estimativas de mercado no período e poderá sofrer alterações.<br />
+      Os valores informados não configuram garantia de previsão de rentabilidade.<br />
+      Taxa de Gateway: 7,00%. Taxa de Cond.: R$ 100,00. Taxa de Gestão: 10,0%.<br />
+      Comparativo com plataformas de acomodação como Airbnb, Booking e Housi, projetadas para 1 ano (considerando a inflação e IPCA 5,2% ao ano).
+    </p>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-left">
+      <ul>
+        <li>Easy na Mídia</li>
+        <li>Decor</li>
+        <li>Expansão</li>
+        <li>Comunidade</li>
+        <li>AppSpace</li>
+      </ul>
+    </div>
+    <div class="footer-right">
+      <img src="assets/logo-rm.jpg" alt="Logo da empresa" />
+    </div>
+  </footer>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
