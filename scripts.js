@@ -5,42 +5,68 @@ document.getElementById("formulario").addEventListener("submit", function (event
 
   const precoM2 = parseFloat(document.getElementById("precoM2").value);
   const quantidadeM2 = parseFloat(document.getElementById("quantidadeM2").value);
-  const numUnidades = parseInt(document.getElementById("numUnidades").value);
-  const taxaOcupacao = parseFloat(document.getElementById("taxaOcupacao").value.replace('%', '')) / 100;
-  const estadiasCurtas = parseFloat(document.getElementById("estadiasCurtas").value.replace('%', '')) / 100;
+  const numUnidades = parseInt(document.getElementById("numUnidades").value, 10);
+  const taxaOcupacao = parseFloat(
+    document.getElementById("taxaOcupacao").value.replace('%', '')
+  ) / 100;
+  const estadiasCurtas = parseFloat(
+    document.getElementById("estadiasCurtas").value.replace('%', '')
+  ) / 100;
 
   if (isNaN(precoM2) || isNaN(quantidadeM2)) {
-    document.getElementById("resultado").textContent = "Preencha todos os campos corretamente!";
+    document.getElementById("resultado").textContent =
+      "Preencha todos os campos corretamente!";
     return;
   }
 
+  // Cálculos principais
   const areaTotal = quantidadeM2 * numUnidades;
   const valorImovel = precoM2 * areaTotal;
   const precoMedioM2 = valorImovel / areaTotal;
-  const contasConsumo = 500 * taxaOcupacao;
+
+  // === Ajuste: consumo varia com número de unidades, ocupação e estadias curtas
+  // 500 = consumo médio por unidade
+  const contasConsumo = 500 * numUnidades * taxaOcupacao * estadiasCurtas;
+
+  // === Ajuste: IPTU soma por unidade (1000 = base anual; 0.1 = 10% de alíquota)
   const iptu = 1000 * numUnidades * 0.1;
-  const condominio = 400 * estadiasCurtas;
 
-  document.getElementById("resultado").innerHTML = `Preço Total: <span class="valor-total">R$ ${valorImovel.toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-  })}</span>`;
+  // Condomínio fixo por unidade
+  const condominio = 400 * numUnidades;
 
-  document.getElementById("valorImovel").textContent = `R$ ${valorImovel.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-  document.getElementById("precoMedioM2").textContent = `R$ ${precoMedioM2.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-  document.getElementById("contasConsumo").textContent = `R$ ${contasConsumo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-  document.getElementById("iptu").textContent = `R$ ${iptu.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-  document.getElementById("condominio").textContent = `R$ ${condominio.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+  // Atualiza resultado principal
+  document.getElementById("resultado").innerHTML =
+    `Preço Total: <span class="valor-total">R$ ${valorImovel.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2
+    })}</span>`;
 
+  // Atualiza estimativas do imóvel
+  document.getElementById("valorImovel").textContent =
+    `R$ ${valorImovel.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+  document.getElementById("precoMedioM2").textContent =
+    `R$ ${precoMedioM2.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+  document.getElementById("contasConsumo").textContent =
+    `R$ ${contasConsumo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+  document.getElementById("iptu").textContent =
+    `R$ ${iptu.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+  document.getElementById("condominio").textContent =
+    `R$ ${condominio.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+
+  // Receita Esperada (ANUAL)
   const diaria = 1180;
   const ocupacaoDisplay = (taxaOcupacao * 100).toFixed(0) + "%";
   const receitaBruta = valorImovel * 0.05;
   const receitaLiquida = valorImovel * 0.035;
 
-  document.getElementById("diariaHousi").textContent = `R$ ${diaria.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+  document.getElementById("diariaHousi").textContent =
+    `R$ ${diaria.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
   document.getElementById("ocupacaoReceita").textContent = ocupacaoDisplay;
-  document.getElementById("rentBruta").textContent = `R$ ${receitaBruta.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-  document.getElementById("rentLiquida").textContent = `R$ ${receitaLiquida.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+  document.getElementById("rentBruta").textContent =
+    `R$ ${receitaBruta.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+  document.getElementById("rentLiquida").textContent =
+    `R$ ${receitaLiquida.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
+  // Atualiza ou cria gráfico
   if (graficoReceita) {
     graficoReceita.data.datasets[0].data = [receitaBruta, receitaLiquida];
     graficoReceita.update();
@@ -62,9 +88,8 @@ document.getElementById("formulario").addEventListener("submit", function (event
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: function (context) {
-                return `R$ ${context.raw.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
-              }
+              label: (ctx) =>
+                `R$ ${ctx.raw.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
             }
           }
         },
@@ -72,9 +97,7 @@ document.getElementById("formulario").addEventListener("submit", function (event
           y: {
             beginAtZero: true,
             ticks: {
-              callback: function (value) {
-                return `R$ ${value.toLocaleString("pt-BR")}`;
-              }
+              callback: (value) => `R$ ${value.toLocaleString("pt-BR")}`
             }
           }
         }
