@@ -24,12 +24,13 @@ document.getElementById("formulario").addEventListener("submit", function (event
   const valorImovel = precoM2 * areaTotal;
   const precoMedioM2 = valorImovel / areaTotal;
 
-  // === Ajuste: consumo varia com número de unidades, ocupação e estadias curtas
-  // 500 = consumo médio por unidade
+  // Consumo (por unidade, ocupação e estadias curtas)
   const contasConsumo = 500 * numUnidades * taxaOcupacao * estadiasCurtas;
 
-  // === Ajuste: IPTU soma por unidade (1000 = base anual; 0.1 = 10% de alíquota)
-  const iptu = 1000 * numUnidades * 0.1;
+  // Novo cálculo de IPTU baseado em alíquota sobre valor venal
+  // 0.00883% = 0.00883 / 100
+  const aliquotaIPTU = 0.00883 / 100;
+  const iptu = valorImovel * aliquotaIPTU;
 
   // Condomínio fixo por unidade
   const condominio = 400 * numUnidades;
@@ -48,7 +49,10 @@ document.getElementById("formulario").addEventListener("submit", function (event
   document.getElementById("contasConsumo").textContent =
     `R$ ${contasConsumo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
   document.getElementById("iptu").textContent =
-    `R$ ${iptu.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+    `R$ ${iptu.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })}`;
   document.getElementById("condominio").textContent =
     `R$ ${condominio.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 
